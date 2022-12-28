@@ -1,0 +1,58 @@
+""" 
+Outlook,Temperature,Humidity,Windy,PlayTennis
+Sunny,Hot,High,Weak,No
+Sunny,Hot,High,Strong,No
+Overcast,Hot,High,Weak,Yes
+Rain,Mild,High,Weak,Yes
+Rain,Cool,Normal,Weak,Yes
+Rain,Cool,Normal,Strong,No
+Overcast,Cool,Normal,Strong,Yes
+Sunny,Mild,High,Weak,No
+Sunny,Cool,Normal,Weak,Yes
+Rain,Mild,Normal,Weak,Yes
+Sunny,Mild,Normal,Strong,Yes
+Overcast,Mild,High,Strong,Yes
+Overcast,Hot,Normal,Weak,Yes
+Rain,Mild,High,Strong,No
+"""
+
+
+
+import pandas as pd
+from sklearn.naive_bayes import GaussianNB 
+from sklearn.preprocessing import LabelEncoder
+from sklearn import tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+
+data = pd.read_csv(r'/kaggle/input/tennis-data/tennisdata.csv')
+
+X = data.iloc[ : , :-1]        # training Input
+Y = data.iloc[ : ,  -1]        # training Output
+
+
+# Label Encoding
+leOutlook = LabelEncoder()
+X.Outlook = leOutlook.fit_transform(X.Outlook)
+
+leTemperature = LabelEncoder()
+X.Temperature = leTemperature.fit_transform(X.Temperature)
+
+leHumidity = LabelEncoder()
+X.Humidity = leHumidity.fit_transform(X.Humidity)
+
+leWindy = LabelEncoder()
+X.Windy = leWindy.fit_transform(X.Windy)
+
+lePlayTennis = LabelEncoder()
+Y = lePlayTennis.fit_transform(Y)
+
+
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(X, Y, test_size=0.2)
+
+classifier = GaussianNB()
+classifier.fit(X_Train, Y_Train)
+prediction = classifier.predict(X_Test)
+print('Accuracy : {}'.format(accuracy_score(prediction, Y_Test)))
+
