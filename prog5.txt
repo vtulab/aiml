@@ -1,0 +1,42 @@
+import numpy as np
+
+epoch=5000
+lr=0.1
+inputlayer_neurons=2
+hiddenlayer_neurons=3
+outputlayer_neurons=1
+
+x = np.array( ([[2,9], [1,5], [3,6]]), dtype=float)
+x = x / np.amax(x,axis=0)
+
+y = np.array( ([92], [86], [89]), dtype=float)
+y = y / 100
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def gradient(x):
+    return x * (1-x)
+
+wh = np.random.uniform(size=(inputlayer_neurons, hiddenlayer_neurons))
+bh = np.random.uniform(size=(1, hiddenlayer_neurons))
+wout = np.random.uniform(size=(hiddenlayer_neurons, outputlayer_neurons))
+bout = np.random.uniform(size=(1, outputlayer_neurons))
+
+for i in range(epoch):
+    h_inp = np.dot(x, wh) + bh
+    h_act = sigmoid(h_inp)
+    out_inp = np.dot(h_act, wout) + bout
+    output = sigmoid(out_inp)
+    
+    d_output = (y-output) * gradient(output)
+    EH = np.dot(d_output, wout.T)
+    
+    d_hidden = EH * gradient(h_act)
+    
+    wout += np.dot(h_act.T, d_output) * lr
+    wh   += np.dot(x.T, d_hidden) * lr
+
+print("Input: \n", x)
+print("Actual output: \n", y)
+print("Predicted output: \n", output)

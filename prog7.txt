@@ -1,0 +1,46 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+from sklearn import datasets
+from sklearn.cluster import KMeans
+from  sklearn.mixture import GaussianMixture
+import sklearn.metrics as sm
+
+
+iris = datasets.load_iris()
+
+X = pd.DataFrame(iris.data)
+Y = pd.DataFrame(iris.target)
+
+X.columns = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth']
+Y.columns = ['Target']
+
+colormap = np.array(['red', 'lime', 'black'])
+plt.figure(figsize=(14,7))
+
+plt.scatter(X.PetalLength, X.PetalWidth, c=colormap[Y.Target], s=40)
+plt.title('Real Cluster')
+plt.show()
+
+# -------------------------------------------------------------------------------
+
+model1 = KMeans(n_clusters=3)
+model1.fit(X)
+
+plt.scatter(X.PetalLength, X.PetalWidth, c=colormap[model1.labels_], s=40)
+plt.title('KMeans Cluster')
+plt.show()
+
+# -------------------------------------------------------------------------------
+
+model2 = GaussianMixture(n_components=3)
+model2.fit(X)
+
+plt.scatter(X.PetalLength, X.PetalWidth, c=colormap[model2.predict(X)], s=40)
+plt.title('EM Cluster')
+plt.show()
+
+print('Accuracy of KMeans: ', sm.accuracy_score(Y, model1.labels_))
+print('Accuracy of EM: '    , sm.accuracy_score(Y, model2.predict(X)))
+print('The GMM using EM algorithm based clustering matched the true labels more closely than the Kmeans.')

@@ -1,0 +1,45 @@
+"""
+sky,airtemp,humidity,wind,water,forcast,enjoysport
+Sunny,Warm,Normal,Strong,Warm,Same,Yes
+Sunny,Warm,High,Strong,Warm,Same,Yes
+Rainy,Cold,High,Strong,Warm,Change,No
+Sunny,Warm,High,Strong,Cool,Change,Yes
+"""
+
+import csv
+
+counter = 1
+PATH = r"/kaggle/input/training-examples/trainingexamples.csv"
+
+with open(PATH) as f:
+    csv_file = csv.reader(f)
+    data = list(csv_file)
+    
+    specific = data[1][:-1]
+    general = [ ['?' for i in range(len(specific))] for j in range(len(specific))]  
+    
+    for i in data:
+        
+        if i[-1] == 'Yes':
+            for j in range(len(specific)):
+                if i[j] != specific[j]:
+                    specific[j] = '?'
+                    general[j][j] = '?'
+            
+        elif i[-1] == 'No':
+            for j in range(len(specific)):
+                if i[j] != specific[j]:
+                    general[j][j] = specific[j]
+        
+        print('Step ', counter); counter+=1;
+        print(specific)
+        print(general)
+
+generalHypothesis = []
+for i in general:
+    for j in i:
+        if j!='?':
+            generalHypothesis.append(i)
+            break
+print('Final Specific Hypothesis: \n', specific)
+print('Final General Hypothesis: \n', generalHypothesis)
